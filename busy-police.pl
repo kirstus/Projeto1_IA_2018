@@ -1,29 +1,5 @@
-%Regras e fatos (ambiente completo 3 dos slides)
-
-%escada(X,Y).
-escada(9,1).
-escada(1,2).
-escada(10,3).
-escada(5,4).
-
-%carrinho(X,Y).
-carrinho(3,2).
-carrinho(5,2).
-carrinho(7,2).
-carrinho(7,3).
-carrinho(7,5).
-carrinho(8,4).
-%bloqueia as portas do elevador:
-carrinho(4,3).
-carrinho(4,4).
-
-% ALGO A MAIS
-%X onde o elevador esta, lista de Y onde ele para.
-elevador(4,[1,3,4]).
-
-
-%ladrao(X,Y).
-ladrao(1,5).
+%execute com: 
+%	$ swipl -f busy-police.pl ambiente.pl
 
 %meta do problema de busca
 meta([X,Y]) :- ladrao(X,Y).
@@ -36,7 +12,7 @@ objeto(X,Y) :- ladrao(X,Y).
 %movimentos permitidos
 %prioridade: subir andares e mover-se para a direita
 %	Elevador
-conectado([X,Y1],[X,Y2], Caminho) :- write('e'), elevador(X,LY), write('e1'),  pertence(Y1,LY), write('e2'),  pertence(Y2,LY),write('e3'),  not(Y2=Y1), not(objeto(X,Y2)) , Y2 > 0, Y2<6, not(pertence([X,Y2],[X,Y1]|Caminho)).
+conectado([X,Y1],[X,Y2], Caminho) :- write('e'), elevador(X,LY), write('e1'),  pertence(Y1,LY), write('e2'),  pertence(Y2,LY),write('e3'),  not(Y2=Y1), not(objeto(X,Y2)) , Y2 > 0, Y2<6, not(pertence([X,Y2],[[X,Y1]|Caminho])).
 %	Subir escada
 conectado([X,Y1],[X,Y2], Caminho) :- write('c1'), escada(X,Y1), Y2 is (Y1+1), Y2<6, not(pertence([X,Y2],[[X,Y1]|Caminho])).
 %	Andar para a direita
@@ -59,7 +35,7 @@ pertence(X,[_|L]) :- pertence(X,L).
 %para achar a solução:
 %  ?-solucao_bp([x_inicial,y_inicial],X)
 %  ?-solucao_bp([1,1],X)
-solucao_bp(Inicial,Solucao) :- bp([],Inicial,Solucao).
+solucao_bp(Solucao) :- inicio(X,Y), bp([],[X,Y],Solucao).
 bp(Caminho,Estado,[Estado|Caminho]) :- nl, meta(Estado), write(done).
 bp(Caminho,Estado,Solucao) :- write(Estado), write('a'), conectado(Estado,Sucessor, Caminho), write(' b '), not(pertence(Sucessor,[Estado|Caminho])), write([Estado|Caminho]) , write(' c '), bp([Estado|Caminho],Sucessor,Solucao).
 
