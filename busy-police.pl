@@ -1,36 +1,61 @@
 %Regras e fatos (ambiente completo 3 dos slides)
-%objeto(X,Y).
+
+%escada(X,Y).
 escada(9,1).
 escada(1,2).
 escada(10,3).
 escada(5,4).
+
+%carrinho(X,Y).
 carrinho(3,2).
 carrinho(5,2).
 carrinho(7,2).
 carrinho(7,3).
 carrinho(7,5).
 carrinho(8,4).
+%bloqueia as portas do elevador:
+carrinho(4,3).
+carrinho(4,4).
+
+% ALGO A MAIS
+%X onde o elevador esta, lista de Y onde ele para.
+elevador(4,[1,3,4]).
+
+
+%ladrao(X,Y).
 ladrao(1,5).
+
+%meta do problema de busca
 meta([X,Y]) :- ladrao(X,Y).
+
+%objetos que se bloqueiam a passagem pelo carrinho:
 objeto(X,Y) :- carrinho(X,Y).
 objeto(X,Y) :- escada(X,Y).
 objeto(X,Y) :- ladrao(X,Y).
 
-conectado([X,Y1],[X,Y2], Caminho) :- write('c1'), escada(X,Y1), Y2 is (Y1+1), Y2<6, not(pertence([X,Y2],[X,Y1]|Caminho)).
-conectado([X1,Y],[X2,Y], Caminho) :- write('c2'), X2 is (X1+1), X2 < 11, not(carrinho(X2,Y)), write(X1), write(X2), write('c2.1'), not(pertence([X2,Y],[X1,Y]|Caminho)), write('c2.2').
-conectado([X1,Y],[X2,Y], Caminho) :- write('c3'), X2 is (X1-1), X2 > 0, not(carrinho(X2,Y)), write(X1), write(X2), write('c3.1'), not(pertence([X2,Y],[X1,Y]|Caminho)), write('c3.2').
-conectado([X1,Y],[X3,Y], Caminho) :- write('c4'), X2 is (X1+1), X3 is (X1+2), X3<11, carrinho(X2,Y), write('c4.1'),  not(objeto(X3,Y)), write('c4.2'), not(pertence([X2,Y],[X1,Y]|Caminho)), write('c4.3').
+%movimentos permitidos
+%prioridade: subir andares e mover-se para a direita
+%	Elevador
+conectado([X,Y1],[X,Y2], Caminho) :- write('e'), elevador(X,LY), write('e1'),  pertence(Y1,LY), write('e2'),  pertence(Y2,LY),write('e3'),  not(Y2=Y1), not(objeto(X,Y2)) , Y2 > 0, Y2<6, not(pertence([X,Y2],[X,Y1]|Caminho)).
+%	Subir escada
+conectado([X,Y1],[X,Y2], Caminho) :- write('c1'), escada(X,Y1), Y2 is (Y1+1), Y2<6, not(pertence([X,Y2],[[X,Y1]|Caminho])).
+%	Andar para a direita
+conectado([X1,Y],[X2,Y], Caminho) :- write('c2'), X2 is (X1+1), X2 < 11, not(carrinho(X2,Y)), write(X1), write(X2), write('c2.1'), not(pertence([X2,Y],[[X1,Y]|Caminho])), write('c2.2').
+%	andar para a esquerda
+conectado([X1,Y],[X2,Y], Caminho) :- write('c3'), X2 is (X1-1), X2 > 0, not(carrinho(X2,Y)), write(X1), write(X2), write('c3.1'), not(pertence([X2,Y],[[X1,Y]|Caminho])), write('c3.2').
+%	pular o carrinho para a direita
+conectado([X1,Y],[X3,Y], Caminho) :- write('c4'), X2 is (X1+1), X3 is (X1+2), X3<11, carrinho(X2,Y), write('c4.1'),  not(objeto(X3,Y)), write('c4.2'), not(pertence([X2,Y],[[X1,Y]|Caminho])), write('c4.3').
+%	pular o carrinho para a esquerda
+conectado([X1,Y],[X3,Y],Caminho) :- write('c5'),   X2 is (X1-1), X3 is (X1-2), X3>0, carrinho(X2,Y), write('c5.1'),  not(objeto(X3,Y)), write('c5.2'), not(pertence([X2,Y],[[X1,Y]|Caminho])), write('c5.3').
+% regra 6: não é necessária nos exemplos dos slides, porém em certos casos pode ser necessário subir um andar e descer por outra escada
+% 	descer escada
+conectado([X,Y1],[X,Y2],Caminho) :- write('c6'), escada(X,Y2), Y2 is (Y1-1), Y2>0, not(pertence([X,Y2],[[X,Y1]|Caminho])).
 
-%conectado([X,Y1],[X,Y2]) :- write('c3'), escada(X,Y1), Y2 is (Y1+1).
-%conectado([X2,Y],[X1,Y]) :- write('c4'),  X2 > X1,conectado([X1,Y],[X2,Y]), .
-
-conectado([X1,Y],[X3,Y],Caminho) :- write('c5'),   X2 is (X1-1), X3 is (X1-2), X3>0, carrinho(X2,Y), write('c5.1'),  not(objeto(X3,Y)), write('c5.2'), not(pertence([X2,Y],[X1,Y]|Caminho)), write('c5.3').
-conectado([X,Y1],[X,Y2],Caminho) :- write('c6'), escada(X,Y2), Y2 is (Y1-1), Y2>0, not(pertence([X,Y2],[X,Y1]|Caminho)).
-%conectado([X,Y2],[X,Y1]) :- write('c5'), conectado([X,Y1],[X,Y2]), Y2 > Y1.
-
+% Regras de manipulação de listas
 pertence(X,[X|_]).
 pertence(X,[_|L]) :- pertence(X,L).
 
+% Algoritmo de busca em profundidade:
 %para achar a solução:
 %  ?-solucao_bp([x_inicial,y_inicial],X)
 %  ?-solucao_bp([1,1],X)
