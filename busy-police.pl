@@ -30,12 +30,14 @@ conectado([X,Y1],[X,Y2],Caminho) :- write('c6'), escada(X,Y2), Y2 is (Y1-1), Y2>
 % Regras de manipulação de listas
 pertence(X,[X|_]).
 pertence(X,[_|L]) :- pertence(X,L).
+add_ultimo(Elem,[ ],[Elem]).
+add_ultimo(Elem, [Cabeça|Cauda],[Cabeça|Cauda_Resultante]) :- add_ultimo(Elem,Cauda,Cauda_Resultante).
 
 % Algoritmo de busca em profundidade:
 %para achar a solução:
 %  ?-solucao_bp([x_inicial,y_inicial],X)
 %  ?-solucao_bp([1,1],X)
 solucao_bp(Solucao) :- inicio(X,Y), bp([],[X,Y],Solucao).
-bp(Caminho,Estado,[Estado|Caminho]) :- nl, meta(Estado), write(done).
-bp(Caminho,Estado,Solucao) :- write(Estado), write('a'), conectado(Estado,Sucessor, Caminho), write(' b '), not(pertence(Sucessor,[Estado|Caminho])), write([Estado|Caminho]) , write(' c '), bp([Estado|Caminho],Sucessor,Solucao).
+bp(Caminho,Estado,Solucao) :- add_ultimo(Estado,Caminho,Solucao), nl, meta(Estado), write(done).
+bp(Caminho,Estado,Solucao) :- write(Estado), write('a'), conectado(Estado,Sucessor, Caminho), write(' b '), not(pertence(Sucessor,[Estado|Caminho])), add_ultimo(Estado,Caminho,Caminho2), write(Caminho2) , write(' c '), bp(Caminho2,Sucessor,Solucao).
 
