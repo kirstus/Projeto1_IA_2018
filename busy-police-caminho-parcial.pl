@@ -41,5 +41,5 @@ add_ultimo(Elem, [Cabeça|Cauda],[Cabeça|Cauda_Resultante]) :- add_ultimo(Elem,
 %  ?-solucao_bp([1,1],X)
 solucao_bp(Solucao) :- inicio(X,Y), bp([],[X,Y],Solucao).
 bp(Caminho,Estado,Solucao) :- add_ultimo(Estado,Caminho,Solucao), nl, meta(Estado), write(done).
-bp(Caminho,Estado,Solucao) :- write("Estado Atual: "), write(Estado),  conectado(Estado,Sucessor, Caminho), not(pertence(Sucessor,[Estado|Caminho])), add_ultimo(Estado,Caminho,Caminho2), bp(Caminho2,Sucessor,Solucao).
+bp(Caminho,Estado,Solucao) :- write("Estado Atual: "), write(Estado),  conectado(Estado,Sucessor, Caminho), not(pertence(Sucessor,[Estado|Caminho])), add_ultimo(Estado,Caminho,Caminho2), nl, write("Caminho Parcial: "), write(Caminho2) , bp(Caminho2,Sucessor,Solucao).
 
