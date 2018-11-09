@@ -19,7 +19,7 @@ carrinho(7,5).
 
 % ALGO A MAIS
 %X onde o elevador esta, lista de Y onde ele para.
-%elevador(4,[1,3,4]).
+elevador(44,[1,3,4]).
 
 %ladrao(X,Y).
 ladrao(10,5).

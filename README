@@ -1,0 +1,11 @@
+Para executar o programa, execute o comando:
+
+$ swipl -f busy-police.pl ambiente
+onde ambiente.pl é um dos arquivos de ambiente com fatos (amb1.pl,amb2.pl...etc)
+
+Para obter os caminhos parciais antes do backtracking, execute:
+$ swipl -f busy-police-caminho-parcial.pl ambiente
+
+Para obter a solução do programa, execute a query no prolog:
+?- solucao_bp(Solucao).
+Após isso, Solucao será unificado com o caminho encontrado.
